@@ -1,6 +1,6 @@
 const express = require('express')
 
-const movies = [
+let movies = [
     "Alladyn",
     "Sinbad",
     "John Wick",
@@ -38,7 +38,35 @@ app.post('/api/movies', (req, res) => {
 })
 
 app.put('/api/movies/:id', (req, res) => {
-    //Napisac updaty listy
+    const movieId = req.params.id
+    if (!movies[movieId]) {
+        res.status(401).send("Bad request")
+        return;
+    }
+    const { movie } = req.body 
+    
+    if (movies.includes(movie) ) {
+        res.status(400).send("Movies already in our list")
+        return;
+    }
+    movies[movieId] = movie;
+    res.send(movies)
+})
+
+function usuwarka(tab,n) {
+    let poczatek = tab.slice(0,n)
+    let koniec = tab.slice(n+1)
+    return [...poczatek, ...koniec];
+}
+
+app.delete('/api/movies/:id',(req,res) =>{
+    const id = req.params.id;
+    if(!movies[id]){
+        res.status(401).send("Incorrect movie id")
+        return;
+    }
+    movies = usuwarka(movies,id);
+    res.send(movies)
 })
 
 //{ "movie": "Spiderman" }
